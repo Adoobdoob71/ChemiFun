@@ -30,7 +30,7 @@ class StackNavigator extends React.Component {
         <Stack.Screen
           component={WaitingPage}
           name="WaitingPage"
-          options={{ headerTransparent: true, headerTitle: "Players" }}
+          options={{ headerTransparent: true, headerTitle: "" }}
         />
         <Stack.Screen
           component={QuestionPage}

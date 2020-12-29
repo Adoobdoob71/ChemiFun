@@ -154,6 +154,7 @@ class JoiningPage extends React.Component {
           <TextInput
             value={this.state.enterKey}
             onChangeText={this.handleJoinGame}
+            placeholder="הכנס את הקוד"
             style={{ flex: 1, marginEnd: 8 }}
           />
           <MaterialCommunityIcons

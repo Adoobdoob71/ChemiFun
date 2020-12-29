@@ -1,6 +1,7 @@
 import * as React from "react";
 import {
   Alert,
+  Image,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -22,10 +23,12 @@ class HomePage extends React.Component {
 
   signIn = () => {
     this.setState({ loading: true });
-    if (this.state.username.trim().length == 0) {
+    if (this.state.username.trim().length === 0) {
       Alert.alert("לא הזנת שם משתמש");
       this.setState({ loading: false });
+      return;
     }
+    this.setState({ loading: false });
     this.props.navigation.navigate("JoiningPage", {
       username: this.state.username,
     });
@@ -53,6 +56,11 @@ class HomePage extends React.Component {
         flexDirection: "row",
         marginVertical: 36,
       },
+      chemiFunImage: {
+        width: "60%",
+        height: "25%",
+        marginVertical: 24,
+      },
     });
     return (
       <>
@@ -66,11 +74,19 @@ class HomePage extends React.Component {
           }}>
           <Text style={styles.title}>ברוכים הבאים</Text>
           <Text style={styles.chemiFunTitle}>לכימיכיף</Text>
+          <Image
+            source={{
+              uri:
+                "https://www.weizmann.ac.il/pages/sites/default/files/uploads/faculties/chemistry.jpg",
+            }}
+            style={styles.chemiFunImage}
+          />
           <View style={styles.textInput}>
             <TextInput
               value={this.state.username}
               onChangeText={(value) => this.setState({ username: value })}
               multiline={false}
+              placeholder="שם משתמש"
               style={{ color: colors.text, flex: 1 }}
             />
           </View>
@@ -78,8 +94,9 @@ class HomePage extends React.Component {
             mode="contained"
             onPress={this.signIn}
             color={colors.primary}
+            loading={this.state.loading}
             icon="chevron-right">
-            Next
+            הבא
           </Button>
         </SafeAreaView>
         <View
