@@ -1,5 +1,12 @@
 import * as React from "react";
-import { SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import { withTheme } from "react-native-paper";
 import DecisionButton from "../components/DecisionButton";
 import * as firebase from "firebase";
@@ -17,11 +24,11 @@ class JoiningPage extends React.Component {
     this.username = props.route.params.username;
   }
 
-  handleJoinGame = (value) => {
+  handleJoinGame = async (value) => {
     this.setState({ enterKey: value, nonExistant: false });
     if (value.length == 20) {
       this.setState({ loading: true });
-      firebase.default
+      await firebase.default
         .database()
         .ref("games")
         .child(value)
@@ -43,10 +50,9 @@ class JoiningPage extends React.Component {
                 username: this.username,
                 points: 0,
               });
-            let enterKeyTemp = this.state.enterKey;
             this.setState({ enterKey: "" });
             this.props.navigation.navigate("WaitingPage", {
-              key: enterKeyTemp,
+              key: value,
               username: this.username,
               owner: false,
               userKey: userKey,
@@ -91,14 +97,14 @@ class JoiningPage extends React.Component {
     const colors = this.props.theme.colors;
     const styles = StyleSheet.create({
       username: {
-        fontSize: 16,
+        fontSize: 24,
         fontWeight: "bold",
         marginEnd: 8,
         color: colors.text,
       },
       shalom: {
         color: colors.text,
-        fontSize: 16,
+        fontSize: 24,
       },
       textInput: {
         paddingHorizontal: 12,
@@ -131,7 +137,7 @@ class JoiningPage extends React.Component {
           style={{
             flexDirection: "row",
             alignItems: "center",
-            marginBottom: 16,
+            marginBottom: 42,
           }}>
           <Text style={styles.username}>{this.username}</Text>
           <Text style={styles.shalom}>שלום</Text>
@@ -157,11 +163,11 @@ class JoiningPage extends React.Component {
             placeholder="הכנס את הקוד"
             style={{ flex: 1, marginEnd: 8 }}
           />
-          <MaterialCommunityIcons
-            name={this.state.loading ? "reload" : "alert-circle-outline"}
-            color={this.state.loading ? colors.text : colors.error}
-            size={21}
-          />
+          {this.state.loading ? (
+            <ActivityIndicator size="small" color={colors.primary} />
+          ) : (
+            <MaterialCommunityIcons name={"alert-circle-outline"} size={21} />
+          )}
         </View>
         <Text style={styles.errorText}>לא מצליח למצוא את המשחק</Text>
       </SafeAreaView>

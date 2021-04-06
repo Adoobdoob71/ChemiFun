@@ -16,13 +16,9 @@ class WaitingPage extends React.Component {
     this.db = firebase.default.database().ref("games").child(this.key);
   }
 
-  findItem = (key, snapshot) => {
-    return key === snapshot.key;
-  };
-
   componentDidMount() {
     this.db.on("value", (snapshot) => {
-      if (snapshot.val().gameStarted) {
+      if (snapshot.val().gameStarted && !this.props.route.params.finished) {
         this.props.navigation.navigate("QuestionPage", {
           owner: false,
           username: this.username,
@@ -34,41 +30,22 @@ class WaitingPage extends React.Component {
     this.reloadPlayers();
   }
 
-  reloadPlayers = () => {
-    // this.db.child("participants").on("child_added", (snapshot) => {
-    //   this.setState({
-    //     data: [...this.state.data, { ...snapshot.val(), key: snapshot.key }],
-    //   });
-    // });
-    // this.db.child("participants").on("child_changed", (snapshot) => {
-    //   let result = this.state.data.indexOf((item) =>
-    //     this.findItem(item, snapshot)
-    //   );
-    //   this.state.data.splice(result, 6);
-    //   this.setState({
-    //     data: [...this.state.data, { ...snapshot.val(), key: snapshot.key }],
-    //   });
-    // });
-    this.db
-      .child("participants")
-      .once("value", (snapshot) => {
-        this.setState({ data: [] });
+  reloadPlayers = async () => {
+    this.db.child("participants").once("value", (snapshot) => {
+      this.setState({ data: [] }, () => {
+        let arr = [];
         snapshot.forEach((item) => {
-          this.setState({
-            data: [...this.state.data, { ...item.val(), key: item.key }],
-          });
+          arr = arr.concat([{ ...item.val(), key: item.key }]);
         });
-      })
-      .then(() => this.db.off());
+        this.setState({
+          data: arr,
+        });
+      });
+    });
   };
 
-  componentWillUnmount() {
-    this.db.off();
-    this.db.child("participants").off();
-  }
-
   startGame = async () => {
-    await firebase.default.database().ref("games").child(this.key).update({
+    await this.db.update({
       gameStarted: true,
     });
     this.props.navigation.navigate("QuestionPage", {
@@ -104,9 +81,10 @@ class WaitingPage extends React.Component {
           />
           <IconButton
             icon="chevron-right"
-            color={colors.primary}
+            color={colors.surface}
             onPress={this.startGame}
             disabled={!this.owner}
+            style={{ backgroundColor: colors.primary }}
           />
         </View>
       ),
@@ -120,12 +98,12 @@ class WaitingPage extends React.Component {
           justifyContent: "center",
           alignItems: "center",
         }}>
-        <Text style={{ color: colors.text, fontSize: 21, marginVertical: 24 }}>
+        <Text style={{ color: colors.text, fontSize: 21, marginVertical: 36 }}>
           {this.key}
         </Text>
         <FlatList
           data={this.state.data}
-          style={{ width: "100%", flex: 1 }}
+          style={{ width: "100%", flex: 1, paddingHorizontal: "10%" }}
           renderItem={({ item }) => (
             <View
               style={{

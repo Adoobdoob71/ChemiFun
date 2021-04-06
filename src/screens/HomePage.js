@@ -52,7 +52,7 @@ class HomePage extends React.Component {
         borderRadius: 8,
         borderColor: colors.primary,
         borderWidth: 1,
-        width: "100%",
+        width: "60%",
         flexDirection: "row",
         marginVertical: 36,
       },
@@ -87,7 +87,7 @@ class HomePage extends React.Component {
               onChangeText={(value) => this.setState({ username: value })}
               multiline={false}
               placeholder="שם משתמש"
-              style={{ color: colors.text, flex: 1 }}
+              style={{ color: colors.text, width: "100%" }}
             />
           </View>
           <Button
